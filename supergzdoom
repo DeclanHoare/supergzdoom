@@ -79,6 +79,10 @@ then
 		pwadlist="$pwadlist FALSE $filename"
 	done
 	pwads=$(zenity --list --title="supergzdoom - Copyright 2017 Declan Hoare" --text="Please select some PWADs to play, if you want to." --checklist --column="" --column="PWAD Filename" --separator=" " $pwadlist)
+	if [ $? -ne 0 ]
+	then
+		exit 0
+	fi
 	if [ "$pwads" ]
 	then
 		for mypwad in $pwads

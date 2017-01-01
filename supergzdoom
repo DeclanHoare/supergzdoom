@@ -19,6 +19,7 @@
 
 GZDOOM=${GZDOOM:-gzdoom}
 SUPERGZDOOM=${SUPERGZDOOM:-$HOME/.config/supergzdoom}
+SAVES=${SAVES:-$SUPERGZDOOM/saves}
 
 if ! which zenity
 then
@@ -62,7 +63,7 @@ then
 	mkdir -p $SUPERGZDOOM/pwads/$iwad
 fi
 
-savedir=$SUPERGZDOOM/saves/$iwad
+savedir=$SAVES/$iwad
 
 if [ "$(ls -A $SUPERGZDOOM/pwads/$iwad)" ]
 then
@@ -79,7 +80,7 @@ then
 			pwad="$pwad$SUPERGZDOOM/pwads/$iwad/$mypwad "
 		done
 		combo=$(md5sum <<<"$iwad $pwad" | gawk '{print $1}')
-		savedir=$SUPERGZDOOM/saves/$combo
+		savedir=$SAVES/$combo
 		pwad="-file $pwad"
 	fi
 fi

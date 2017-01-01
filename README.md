@@ -2,7 +2,8 @@ supergzdoom is an extremely simple WAD selector for gzdoom written in Bash using
 
 ##Setup
 IWADs go in ~/.config/supergzdoom/iwads, and PWADs for an IWAD go in ~/.config/supergzdoom/pwads/(IWAD NAME).
-(The path can be configured with a variable at the top of the file, as can the executable for gzdoom.)
+(The path can be configured with a variable at the top of the file, as can the executable for gzdoom and the
+path of the save directory.)
 
 ##Operation
 Upon running supergzdoom, you can choose an IWAD and any PWADs you would like to use with it.

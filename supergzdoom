@@ -78,9 +78,9 @@ then
 		do
 			pwad="$pwad$SUPERGZDOOM/pwads/$iwad/$mypwad "
 		done
-		echo $pwad
 		combo=$(md5sum <<<"$iwad $pwad" | gawk '{print $1}')
 		savedir=$SUPERGZDOOM/saves/$combo
+		pwad="-file $pwad"
 	fi
 fi
 
@@ -91,4 +91,4 @@ then
 	mkdir -p $savedir
 fi
 
-$GZDOOM -savedir $savedir -iwad $iwad -file $pwad
+$GZDOOM -savedir $savedir -iwad $iwad $pwad

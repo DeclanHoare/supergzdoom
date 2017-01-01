@@ -1,0 +1,94 @@
+#!/bin/bash
+# Copyright 2017 Declan Hoare
+#
+# This file is part of supergzdoom.
+# supergzdoom is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# supergzdoom is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with supergzdoom.  If not, see <http://www.gnu.org/licenses/>.
+#
+# supergzdoom - the launcher
+
+GZDOOM=${GZDOOM:-gzdoom}
+SUPERGZDOOM=${SUPERGZDOOM:-$HOME/.config/supergzdoom}
+
+if ! which zenity
+then
+	echo "cannot find zenity"
+	exit 1
+fi
+
+if ! which $GZDOOM
+then
+	zenity --error --title="supergzdoom: Cannot find $GZDOOM!" --text="Cannot find $GZDOOM."
+	exit 2
+fi
+
+if [ ! -d $SUPERGZDOOM ]
+then
+	mkdir -p $SUPERGZDOOM/{iwads,pwads,saves}
+fi
+
+if [ ! "$(ls -A $SUPERGZDOOM/iwads)" ]
+then
+	zenity --error --title="supergzdoom: No IWADs!" --text="There are no IWADs in $SUPERGZDOOM/iwads. Please add some."
+	exit 3
+fi
+
+cd $SUPERGZDOOM/iwads
+firstfile="true"
+for filename in *
+do
+	if [ "$firstfile" = "true" ]
+	then
+		iwadlist="TRUE $filename"
+		firstfile="false"
+	else
+		iwadlist="$iwadlist FALSE $filename"
+	fi
+done
+iwad=$(zenity --list --title="supergzdoom - Copyright 2017 Declan Hoare" --text="Please select an IWAD to play." --radiolist --column="" --column="IWAD Filename" $iwadlist)
+
+if [ ! -d $SUPERGZDOOM/pwads/$iwad ]
+then
+	mkdir -p $SUPERGZDOOM/pwads/$iwad
+fi
+
+savedir=$SUPERGZDOOM/saves/$iwad
+
+if [ "$(ls -A $SUPERGZDOOM/pwads/$iwad)" ]
+then
+	cd $SUPERGZDOOM/pwads/$iwad
+	for filename in *
+	do
+		pwadlist="$pwadlist FALSE $filename"
+	done
+	pwads=$(zenity --list --title="supergzdoom - Copyright 2017 Declan Hoare" --text="Please select some PWADs to play, if you want to." --checklist --column="" --column="PWAD Filename" --separator=" " $pwadlist)
+	if [ "$pwads" ]
+	then
+		for mypwad in $pwads
+		do
+			pwad="$pwad$SUPERGZDOOM/pwads/$iwad/$mypwad "
+		done
+		echo $pwad
+		combo=$(md5sum <<<"$iwad $pwad" | gawk '{print $1}')
+		savedir=$SUPERGZDOOM/saves/$combo
+	fi
+fi
+
+iwad=$SUPERGZDOOM/iwads/$iwad
+
+if [ ! -d "$savedir" ]
+then
+	mkdir -p $savedir
+fi
+
+$GZDOOM -savedir $savedir -iwad $iwad -file $pwad

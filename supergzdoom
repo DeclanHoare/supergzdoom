@@ -58,6 +58,12 @@ do
 done
 iwad=$(zenity --list --title="supergzdoom - Copyright 2017 Declan Hoare" --text="Please select an IWAD to play." --radiolist --column="" --column="IWAD Filename" $iwadlist)
 
+if [ ! "$iwad" ]
+then
+	# user clicked cancel
+	exit 0
+fi
+
 if [ ! -d $SUPERGZDOOM/pwads/$iwad ]
 then
 	mkdir -p $SUPERGZDOOM/pwads/$iwad
